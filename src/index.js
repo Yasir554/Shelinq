@@ -54,13 +54,53 @@ export default {
 // ---------- AUTH HELPERS ----------
 
 async function handleLogin(request, env) {
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const now = Date.now();
+  const windowMs = 15 * 60 * 1000; // 15 minute window
+  const maxAttempts = 5;
+
+  const record = await env.DB.prepare(
+    "SELECT attempts, first_attempt_at FROM login_attempts WHERE ip = ?"
+  ).bind(ip).first();
+
+  if (record) {
+    const windowExpired = now - record.first_attempt_at > windowMs;
+
+    if (!windowExpired && record.attempts >= maxAttempts) {
+      return new Response(
+        JSON.stringify({ error: "Too many attempts. Try again later." }),
+        { status: 429, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    if (windowExpired) {
+      await env.DB.prepare(
+        "UPDATE login_attempts SET attempts = 0, first_attempt_at = ? WHERE ip = ?"
+      ).bind(now, ip).run();
+    }
+  }
+
   const { password } = await request.json();
 
   if (password !== env.ADMIN_PASSWORD) {
+    if (record) {
+      await env.DB.prepare(
+        "UPDATE login_attempts SET attempts = attempts + 1 WHERE ip = ?"
+      ).bind(ip).run();
+    } else {
+      await env.DB.prepare(
+        "INSERT INTO login_attempts (ip, attempts, first_attempt_at) VALUES (?, 1, ?)"
+      ).bind(ip, now).run();
+    }
+
     return new Response(JSON.stringify({ error: "Invalid password" }), {
       status: 401,
       headers: { "Content-Type": "application/json" }
     });
+  }
+
+  if (record) {
+    await env.DB.prepare("DELETE FROM login_attempts WHERE ip = ?").bind(ip).run();
   }
 
   const token = await createToken(env.JWT_SECRET);
@@ -122,7 +162,7 @@ async function checkAuth(request, env) {
     });
   }
 
-  return null; // no error means auth passed
+  return null;
 }
 
 // ---------- BOOK HANDLERS ----------

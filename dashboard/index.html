@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shelinq Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Login screen -->
+  <div id="login-screen">
+    <h1>Shelinq</h1>
+    <input type="password" id="password-input" placeholder="Enter password" />
+    <button id="login-btn">Log In</button>
+    <p id="login-error" class="error"></p>
+  </div>
+
+  <!-- Main dashboard (hidden until logged in) -->
+  <div id="dashboard-screen" class="hidden">
+    <div class="header-row">
+      <h1>Your Books</h1>
+      <button class="secondary" id="logout-btn">Log Out</button>
+    </div>
+
+    <div id="upload-section">
+      <input type="text" id="title-input" placeholder="Book title" />
+      <input type="file" id="file-input" accept="application/pdf" />
+      <button id="upload-btn">Upload Book</button>
+      <p id="upload-status"></p>
+    </div>
+
+    <div class="table-wrapper">
+      <table id="books-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Added</th>
+            <th>QR Code</th>
+            <th>Link</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="books-list"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Edit modal -->
+  <div id="edit-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <h2>Edit Book</h2>
+      <label>Title</label>
+      <input type="text" id="edit-title-input" placeholder="Book title" />
+      <label>Replace PDF (optional)</label>
+      <input type="file" id="edit-file-input" accept="application/pdf" />
+      <div class="modal-actions">
+        <button class="secondary" id="edit-cancel-btn">Cancel</button>
+        <button id="edit-save-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm modal (used for delete) -->
+  <div id="confirm-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <h2 id="confirm-title">Are you sure?</h2>
+      <p id="confirm-message"></p>
+      <div class="modal-actions">
+        <button class="secondary" id="confirm-cancel-btn">Cancel</button>
+        <button class="danger-solid" id="confirm-ok-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

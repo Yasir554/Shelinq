@@ -1,49 +1,53 @@
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization"
+};
+
+function withCors(response) {
+  const newHeaders = new Headers(response.headers);
+  Object.entries(corsHeaders).forEach(([key, value]) => newHeaders.set(key, value));
+  return new Response(response.body, {
+    status: response.status,
+    headers: newHeaders
+  });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Login route (public)
+    // Handle CORS preflight
+    if (request.method === "OPTIONS") {
+      return new Response(null, { headers: corsHeaders });
+    }
+
+    let response;
+
     if (url.pathname === "/api/login" && request.method === "POST") {
-      return handleLogin(request, env);
-    }
-
-    // Upload a new book (protected)
-    if (url.pathname === "/api/books/upload" && request.method === "POST") {
+      response = await handleLogin(request, env);
+    } else if (url.pathname === "/api/books/upload" && request.method === "POST") {
       const authError = await checkAuth(request, env);
-      if (authError) return authError;
-      return handleUpload(request, env, url);
-    }
-
-    // List all active books (protected — it's the client's own dashboard data)
-    if (url.pathname === "/api/books" && request.method === "GET") {
+      response = authError || await handleUpload(request, env, url);
+    } else if (url.pathname === "/api/books" && request.method === "GET") {
       const authError = await checkAuth(request, env);
-      if (authError) return authError;
-      return handleList(env);
-    }
-
-    // Edit a book (protected)
-    if (url.pathname.startsWith("/api/books/") && request.method === "PUT") {
+      response = authError || await handleList(env);
+    } else if (url.pathname.startsWith("/api/books/") && request.method === "PUT") {
       const authError = await checkAuth(request, env);
-      if (authError) return authError;
       const slug = url.pathname.replace("/api/books/", "");
-      return handleEdit(slug, request, env);
-    }
-
-    // Delete a book (protected)
-    if (url.pathname.startsWith("/api/books/") && request.method === "DELETE") {
+      response = authError || await handleEdit(slug, request, env);
+    } else if (url.pathname.startsWith("/api/books/") && request.method === "DELETE") {
       const authError = await checkAuth(request, env);
-      if (authError) return authError;
       const slug = url.pathname.replace("/api/books/", "");
-      return handleDelete(slug, env);
-    }
-
-    // Public redirect route (what the QR code points to — stays open for readers)
-    if (url.pathname.startsWith("/b/")) {
+      response = authError || await handleDelete(slug, env);
+    } else if (url.pathname.startsWith("/b/")) {
       const slug = url.pathname.replace("/b/", "");
-      return handleRedirect(slug, env);
+      response = await handleRedirect(slug, env);
+    } else {
+      response = new Response("Shelinq Worker is running!");
     }
 
-    return new Response("Shelinq Worker is running!");
+    return withCors(response);
   }
 };
 

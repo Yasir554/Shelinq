@@ -67,7 +67,7 @@ async function handleLogin(request, env) {
 }
 
 async function createToken(secret) {
-  const payload = { exp: Date.now() + 1000 * 60 * 60 * 24 }; // 24 hour expiry
+  const payload = { exp: Date.now() + 1000 * 60 * 30 }; // 30 minute expiry
   const payloadB64 = btoa(JSON.stringify(payload));
   const signature = await sign(payloadB64, secret);
   return `${payloadB64}.${signature}`;

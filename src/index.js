@@ -2,29 +2,42 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Upload a new book
+    // Login route (public)
+    if (url.pathname === "/api/login" && request.method === "POST") {
+      return handleLogin(request, env);
+    }
+
+    // Upload a new book (protected)
     if (url.pathname === "/api/books/upload" && request.method === "POST") {
+      const authError = await checkAuth(request, env);
+      if (authError) return authError;
       return handleUpload(request, env, url);
     }
 
-    // List all active books
+    // List all active books (protected — it's the client's own dashboard data)
     if (url.pathname === "/api/books" && request.method === "GET") {
+      const authError = await checkAuth(request, env);
+      if (authError) return authError;
       return handleList(env);
     }
 
-    // Edit a book (title and/or replace PDF)
+    // Edit a book (protected)
     if (url.pathname.startsWith("/api/books/") && request.method === "PUT") {
+      const authError = await checkAuth(request, env);
+      if (authError) return authError;
       const slug = url.pathname.replace("/api/books/", "");
       return handleEdit(slug, request, env);
     }
 
-    // Delete a book (soft delete)
+    // Delete a book (protected)
     if (url.pathname.startsWith("/api/books/") && request.method === "DELETE") {
+      const authError = await checkAuth(request, env);
+      if (authError) return authError;
       const slug = url.pathname.replace("/api/books/", "");
       return handleDelete(slug, env);
     }
 
-    // Public redirect route (what the QR code points to)
+    // Public redirect route (what the QR code points to — stays open for readers)
     if (url.pathname.startsWith("/b/")) {
       const slug = url.pathname.replace("/b/", "");
       return handleRedirect(slug, env);
@@ -33,6 +46,82 @@ export default {
     return new Response("Shelinq Worker is running!");
   }
 };
+
+// ---------- AUTH HELPERS ----------
+
+async function handleLogin(request, env) {
+  const { password } = await request.json();
+
+  if (password !== env.ADMIN_PASSWORD) {
+    return new Response(JSON.stringify({ error: "Invalid password" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+
+  const token = await createToken(env.JWT_SECRET);
+
+  return new Response(JSON.stringify({ token }), {
+    headers: { "Content-Type": "application/json" }
+  });
+}
+
+async function createToken(secret) {
+  const payload = { exp: Date.now() + 1000 * 60 * 60 * 24 }; // 24 hour expiry
+  const payloadB64 = btoa(JSON.stringify(payload));
+  const signature = await sign(payloadB64, secret);
+  return `${payloadB64}.${signature}`;
+}
+
+async function verifyToken(token, secret) {
+  const [payloadB64, signature] = token.split(".");
+  if (!payloadB64 || !signature) return false;
+
+  const expectedSignature = await sign(payloadB64, secret);
+  if (signature !== expectedSignature) return false;
+
+  const payload = JSON.parse(atob(payloadB64));
+  if (Date.now() > payload.exp) return false;
+
+  return true;
+}
+
+async function sign(data, secret) {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signatureBuffer = await crypto.subtle.sign("HMAC", key, encoder.encode(data));
+  return btoa(String.fromCharCode(...new Uint8Array(signatureBuffer)));
+}
+
+async function checkAuth(request, env) {
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+
+  const token = authHeader.replace("Bearer ", "");
+  const valid = await verifyToken(token, env.JWT_SECRET);
+
+  if (!valid) {
+    return new Response(JSON.stringify({ error: "Invalid or expired token" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+
+  return null; // no error means auth passed
+}
+
+// ---------- BOOK HANDLERS ----------
 
 async function handleUpload(request, env, url) {
   const formData = await request.formData();
@@ -110,7 +199,6 @@ async function handleEdit(slug, request, env) {
   }
 
   if (newFile) {
-    // Overwrite the same R2 key so the slug/QR code never has to change
     await env.BOOKS_BUCKET.put(book.r2_key, newFile.stream());
   }
 

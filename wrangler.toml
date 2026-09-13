@@ -1,0 +1,12 @@
+name = "shelinq-worker"
+main = "src/index.js"
+compatibility_date = "2026-09-13"
+
+[[r2_buckets]]
+binding = "BOOKS_BUCKET"
+bucket_name = "shelinq-books"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "shelinq-db"
+database_id = "0aef7851-94d5-451d-83b7-bf6413b9ac8c"

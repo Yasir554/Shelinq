@@ -1,4 +1,4 @@
-const API_BASE = "https://shelinq-worker.yasirabass554.workers.dev";
+const API_BASE = "https://your-worker-name.yourname.workers.dev";
 
 let authToken = sessionStorage.getItem("shelinq_token") || null;
 

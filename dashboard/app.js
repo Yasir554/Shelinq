@@ -8,6 +8,9 @@ const passwordInput = document.getElementById("password-input");
 const loginBtn = document.getElementById("login-btn");
 const loginError = document.getElementById("login-error");
 const logoutBtn = document.getElementById("logout-btn");
+const togglePasswordBtn = document.getElementById("toggle-password");
+const eyeOpen = document.getElementById("eye-open");
+const eyeClosed = document.getElementById("eye-closed");
 
 const titleInput = document.getElementById("title-input");
 const fileInput = document.getElementById("file-input");
@@ -41,6 +44,13 @@ if (authToken) {
 loginBtn.addEventListener("click", handleLogin);
 passwordInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") handleLogin();
+});
+
+togglePasswordBtn.addEventListener("click", () => {
+  const isPassword = passwordInput.type === "password";
+  passwordInput.type = isPassword ? "text" : "password";
+  eyeOpen.classList.toggle("hidden", isPassword);
+  eyeClosed.classList.toggle("hidden", !isPassword);
 });
 
 async function handleLogin() {

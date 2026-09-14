@@ -74,6 +74,43 @@ input:focus {
   min-height: 16px;
 }
 
+/* ---------- Password visibility toggle ---------- */
+
+.password-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.password-wrapper input {
+  margin-bottom: 0;
+  padding-right: 44px;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 6px 8px;
+  cursor: pointer;
+  width: auto;
+  color: var(--brown-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-password-btn svg {
+  display: block;
+}
+
+.toggle-password-btn:hover {
+  background: none;
+  opacity: 0.7;
+}
+
 /* ---------- Buttons ---------- */
 
 button {
@@ -136,6 +173,17 @@ button.secondary:hover {
 #dashboard-screen {
   max-width: 780px;
   margin: 0 auto;
+}
+
+.brand-header {
+  margin-bottom: 20px;
+}
+
+.brand-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent-dark);
+  letter-spacing: -0.3px;
 }
 
 .header-row {

@@ -208,6 +208,96 @@ You'll get a live URL like `https://your-project.web.app` — that's your Shelin
 - **Single-admin only:** Shelinq is designed for one admin per deployment, not multiple user accounts. If you need multi-user support, you'll need to extend the authentication system yourself.
 - **Soft delete:** deleting a book doesn't erase it from the database — it's marked as "deleted" so the link can still show a friendly "no longer available" message instead of a broken page. The data isn't fully wiped unless removed manually from your Cloudflare D1 database and R2 bucket (via the Cloudflare dashboard or `wrangler d1 execute` commands).
 
+
+## Future Updates
+
+Shelinq is currently focused on being a simple, free, and self-hosted way to connect physical documents to their digital versions. The current version is intentionally lightweight, but there are several ideas I would like to explore as the project grows.
+
+> *IMPORTANT NOTE: These are ideas, not commitments — Shelinq is a side project, and development happens whenever time allows.*
+
+### Planned & Possible Improvements
+
+* **📊 Scan Analytics**
+
+  * Track how many times each QR code/link has been accessed
+  * Show scan activity over time
+  * Show the last access time
+  * Provide basic, privacy-conscious usage statistics
+  * Keep analytics lightweight without turning Shelinq into an invasive tracking platform
+
+* **🔗 Better Link & QR Management**
+
+  * Custom slugs
+  * Regenerate or download QR codes in additional formats
+  * Better link management and previews
+  * Optional custom domains
+  * Improved handling of QR codes for printed materials
+
+* **📄 Document Management Improvements**
+
+  * Better document previews
+  * File size and storage information
+  * Improved PDF replacement and caching behavior
+  * Bulk management tools
+  * Optional permanent deletion of files from R2 and metadata from D1
+
+* **👥 Multi-User Support**
+
+  * Support multiple administrators/users
+  * User-specific document management
+  * Role-based permissions
+  * Shared document libraries for teams, classrooms, or organizations
+
+* **🔐 Security & Reliability**
+
+  * Additional authentication options
+  * More configurable rate limiting
+  * Improved file validation and upload protections
+  * Better caching behavior when replacing documents
+  * More detailed security documentation
+  * Automated testing for critical API and authentication paths
+
+* **🎨 Dashboard Improvements**
+
+  * Improved dashboard UX
+  * Drag-and-drop uploads
+  * Better mobile management
+  * Search, filtering, and sorting
+  * More useful document status information
+
+* **🌍 Deployment Improvements**
+
+  * Make the self-hosting process even easier
+  * Improve setup documentation
+  * Provide clearer configuration examples
+  * Explore one-command or guided deployment options
+  * Keep the project compatible with free or very low-cost infrastructure where practical
+
+* **📦 More Storage/Hosting Options**
+
+  * Explore support for additional object-storage providers
+  * Reduce dependency on any single cloud provider where practical
+  * Keep the architecture modular enough for people to adapt Shelinq to their own infrastructure
+
+* **🧪 Testing & Developer Experience**
+
+  * Add automated tests
+  * Improve local development and testing workflows
+  * Add CI checks
+  * Improve contribution documentation
+  * Make the codebase easier to extend and fork
+
+### The Bigger Goal
+
+The long-term goal of Shelinq is not to become another platform that charges you for storing and sharing your own documents.
+
+It is to remain **simple, open-source, and self-hostable** while becoming a more capable document publishing and QR management system.
+
+You should be able to take the repository, connect it to your own infrastructure, and run your own instance.
+
+> **Your documents. Your infrastructure. Your links.**
+
+
 ## Acknowledgments
 
 Shelinq uses [qrcode.js](https://davidshimjs.github.io/qrcodejs/) for client-side QR code generation.

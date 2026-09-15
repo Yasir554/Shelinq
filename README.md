@@ -217,7 +217,7 @@ Shelinq is currently focused on being a simple, free, and self-hosted way to con
 
 ### Planned & Possible Improvements
 
-* **📊 Scan Analytics**
+* **Scan Analytics**
 
   * Track how many times each QR code/link has been accessed
   * Show scan activity over time
@@ -225,7 +225,7 @@ Shelinq is currently focused on being a simple, free, and self-hosted way to con
   * Provide basic, privacy-conscious usage statistics
   * Keep analytics lightweight without turning Shelinq into an invasive tracking platform
 
-* **🔗 Better Link & QR Management**
+* **Better Link & QR Management**
 
   * Custom slugs
   * Regenerate or download QR codes in additional formats
@@ -233,7 +233,7 @@ Shelinq is currently focused on being a simple, free, and self-hosted way to con
   * Optional custom domains
   * Improved handling of QR codes for printed materials
 
-* **📄 Document Management Improvements**
+* **Document Management Improvements**
 
   * Better document previews
   * File size and storage information
@@ -241,14 +241,14 @@ Shelinq is currently focused on being a simple, free, and self-hosted way to con
   * Bulk management tools
   * Optional permanent deletion of files from R2 and metadata from D1
 
-* **👥 Multi-User Support**
+* **Multi-User Support**
 
   * Support multiple administrators/users
   * User-specific document management
   * Role-based permissions
   * Shared document libraries for teams, classrooms, or organizations
 
-* **🔐 Security & Reliability**
+* **Security & Reliability**
 
   * Additional authentication options
   * More configurable rate limiting
@@ -257,7 +257,7 @@ Shelinq is currently focused on being a simple, free, and self-hosted way to con
   * More detailed security documentation
   * Automated testing for critical API and authentication paths
 
-* **🎨 Dashboard Improvements**
+* **Dashboard Improvements**
 
   * Improved dashboard UX
   * Drag-and-drop uploads
@@ -265,7 +265,7 @@ Shelinq is currently focused on being a simple, free, and self-hosted way to con
   * Search, filtering, and sorting
   * More useful document status information
 
-* **🌍 Deployment Improvements**
+* **Deployment Improvements**
 
   * Make the self-hosting process even easier
   * Improve setup documentation
@@ -273,13 +273,13 @@ Shelinq is currently focused on being a simple, free, and self-hosted way to con
   * Explore one-command or guided deployment options
   * Keep the project compatible with free or very low-cost infrastructure where practical
 
-* **📦 More Storage/Hosting Options**
+* **More Storage/Hosting Options**
 
   * Explore support for additional object-storage providers
   * Reduce dependency on any single cloud provider where practical
   * Keep the architecture modular enough for people to adapt Shelinq to their own infrastructure
 
-* **🧪 Testing & Developer Experience**
+* **Testing & Developer Experience**
 
   * Add automated tests
   * Improve local development and testing workflows
